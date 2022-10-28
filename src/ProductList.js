@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Container, Nav, Navbar, Row, Col } from "react-bootstrap/";
+import { Button, Container, Navbar, Row, Col } from "react-bootstrap/";
 import { useNavigate } from "react-router-dom";
 
 function ProductList({ e }) {
@@ -9,7 +9,7 @@ function ProductList({ e }) {
       <img
         width="80%"
         onClick={() => {
-          navigate(`/detail/${e.id}`); 
+          navigate(`/detail/${e.id}`);
         }}
         src={`https://codingapple1.github.io/shop/shoes${e.id + 1}.jpg`}
       />

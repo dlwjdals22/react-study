@@ -2,22 +2,26 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Container, Nav, Navbar, Row, Col } from "react-bootstrap/";
 import data from "./data";
-import { useState } from "react";
-import Main from "./Main";
+import { useEffect, useState } from "react";
 import ProductList from "./ProductList";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./pages/Detail";
 import About from "./pages/About";
 import Event from "./pages/Event";
 import image1 from "./image1.jpg";
+import axios from "axios";
 
 function App() {
   let navigate = useNavigate();
   let [shoes, setShoes] = useState(data);
+  let [more, setMore] = useState([]);
+  let [moreShow, setMoreShow] = useState(false);
+
+  // let more = ["a", "b", "c"];
 
   function Sort() {
     let copy = [...shoes];
-    console.log(copy);
+    console.log(shoes);
     console.log(
       copy.sort((a, b) => {
         let x = a.title;
@@ -27,9 +31,17 @@ function App() {
         return 0;
       })
     );
-    console.log(copy);
+    // console.log(copy);
     // setShoes(copy.sort());
   }
+
+  useEffect(() => {
+    axios.get("https://codingapple1.github.io/shop/data2.json").then((data) => {
+      setMore(...more, data.data);
+    });
+  }, []);
+
+  console.log("more : ", more);
 
   return (
     <div className="App">
@@ -57,7 +69,7 @@ function App() {
         <Route
           path="/"
           element={
-            <>
+            <div>
               {/* <div className="main-bg" style={{ backgroundImage: `url(${image1})` }}> */}
               <div
                 className="main-bg"
@@ -73,9 +85,51 @@ function App() {
                     })}
                   </Row>
                 </Container>
-                <button onClick={Sort}>버튼</button>
+                <button onClick={Sort}>정렬버튼</button>
+                <button
+                  onClick={
+                    () => {
+                      if (moreShow === false) setMoreShow(true);
+                      else if (moreShow === true) setMoreShow(false);
+                    }
+                    // axios
+                    //   .get("https://codingapple1.github.io/shop/data2.json")
+                    //   .then((data) => {
+                    //     // console.log(data);
+                    //   })
+                    //   .catch(() => {
+                    //     console.log("실패");
+                    //   });
+                  }
+                >
+                  버튼
+                </button>
+                {moreShow === false ? null : (
+                  <Container fluid="md">
+                    <Row>
+                      {more.map((e, i) => {
+                        return (
+                          <Col key={i}>
+                            <img
+                              width="80%"
+                              onClick={() => {
+                                navigate(`/detail/${e.id}`);
+                              }}
+                              src={`https://codingapple1.github.io/shop/shoes${
+                                e.id + 1
+                              }.jpg`}
+                            />
+                            <h4>{e.title}</h4>
+                            <p>{e.content}</p>
+                            <p>{e.price}</p>
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  </Container>
+                )}
               </div>
-            </>
+            </div>
           }
         />
         <Route path="/detail/:id" element={<Detail shoes={shoes} />}></Route>

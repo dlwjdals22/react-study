@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Nav } from "react-bootstrap";
 import styled from "styled-components";
 
 function Detail(props) {
   let { id } = useParams();
+  let ref = useRef();
 
   let [count, setCount] = useState(0);
   let [boolean, setBoolean] = useState(true);
+  let [tap, setTap] = useState(0);
 
   useEffect(() => {
     console.log("마운트됐다");
@@ -34,6 +37,20 @@ function Detail(props) {
   //   console.log();
   // }
 
+  const notText = (e) => {
+    if (e.key >= 0 && e.key <= 9) {
+      return true;
+    }
+    ref.current.value = "";
+    alert("그러지마세요");
+  };
+
+  // useEffect((e) => {
+  //   if (notText(e) === true) {
+  //     return;
+  //   }
+  // });
+
   return (
     <div className="container">
       {boolean === true ? (
@@ -58,6 +75,7 @@ function Detail(props) {
           >
             테스트
           </button>
+          <input ref={ref} onKeyUp={(e) => notText(e)} />
           <div>{count}</div>
           {/* <NewBtn>asdf</NewBtn> */}
           <h4 className="pt-5">{props.shoes[props.shoes[id].id].title}</h4>
@@ -65,9 +83,51 @@ function Detail(props) {
           <p>{props.shoes[props.shoes[id].id].price}</p>
           <button className="btn btn-danger">주문하기</button>
         </div>
+        <Nav variant="tabs" defaultActiveKey="link0">
+          <Nav.Item>
+            <Nav.Link onClick={() => setTap(0)} eventKey="link0">
+              버튼0
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link onClick={() => setTap(1)} eventKey="link1">
+              버튼1
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link onClick={() => setTap(2)} eventKey="link2">
+              버튼2
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <TapContent tap={tap} />
       </div>
     </div>
   );
 }
 
 export default Detail;
+
+function TapContent({ tap }) {
+  let [fade, setFade] = useState("");
+
+  useEffect(() => {
+    setFade("");
+    setTimeout(() => {
+      setFade("end");
+    }, 100);
+  }, [tap]);
+
+  return (
+    <div className={`start ${fade}`}>
+      {[<div>내용0</div>, <div>내용1</div>, <div>내용2</div>][tap]}
+    </div>
+  );
+  // if (tap === 0) {
+  //   return <div>내용 0</div>;
+  // } else if (tap === 1) {
+  //   return <div>내용 1</div>;
+  // } else if (tap === 2) {
+  //   return <div>내용 2</div>;
+  // }
+}
